@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class SessionService {
@@ -37,7 +38,7 @@ public class SessionService {
         });
 
         int minutes = clampToRules(plannedMinutes);
-        Instant now = clock.instant();
+        Instant now = now();
         FocusSession session = new FocusSession(now, minutes, LocalDate.now(clock));
         return sessionRepository.save(session);
     }
@@ -46,7 +47,7 @@ public class SessionService {
         FocusSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("No session with id " + sessionId));
 
-        session.complete(clock.instant());
+        session.complete(now());
         FocusSession saved = sessionRepository.save(session);
 
         streakService.recordCompletedSession(saved);
@@ -59,12 +60,16 @@ public class SessionService {
         FocusSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("No session with id " + sessionId));
 
-        session.abandon(clock.instant());
+        session.abandon(now());
         return sessionRepository.save(session);
     }
 
     public FocusSession currentSession() {
         return sessionRepository.findFirstByStatus(SessionStatus.RUNNING).orElse(null);
+    }
+
+    private Instant now() {
+        return clock.instant().truncatedTo(ChronoUnit.MILLIS);
     }
 
     private int clampToRules(int requestedMinutes) {
