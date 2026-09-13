@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: focus-flow
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase:
+          name: focus-flow-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: focus-flow-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: focus-flow-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: focus-flow-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: focus-flow-db
+          property: password
+
+databases:
+  - name: focus-flow-db
+    plan: free

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: focus-flow
+  datasource:
+    url: jdbc:h2:mem:focusflow;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+server:
+  port: 8080
+
+focus:
+  rules:
+    min-minutes: 5
+    max-minutes: 120
+    default-minutes: 25
+    daily-goal-sessions: 4
